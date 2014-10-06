@@ -35,12 +35,19 @@
 // This placeholder will be replaced with the breakpoint name
 $mixin-breakpoint-name-placeholder: "{bp}";
 
-@mixin generate-at-breakpoints($class, $breakpoint-names: ()) {
+@mixin generate-at-breakpoints($class, $breakpoint-names: (), $include-base-class: false) {
 
   $all-breakpoint-names: map-keys($breakpoints);
 
   @if $breakpoint-names == all {
     $breakpoint-names: $all-breakpoint-names;
+  }
+
+  @if $include-base-class {
+    %#{str-replace($class, '.', '')},
+    #{$class} {
+      @content;
+    }
   }
 
   @each $breakpoint-name in $breakpoint-names {
