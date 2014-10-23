@@ -40,6 +40,11 @@
 // Apply at these breakpoints
 $u-spacing-breakpoints: $default-breakpoints !default;
 
+$u-spacing-classes-for-breakpoints: (
+  ".u-s-mt-n-base",
+  ".u-s-pl-tiny"
+);
+
 // Spacing sizes
 $u-spacing-base:        $spacing-base !default;
 
@@ -879,10 +884,13 @@ $u-spacing-types: (
 
   // No spacing classes
   @if str_index($abbreviation, '-none') != null {
-    @include generate-at-breakpoints(".u-s-#{$abbreviation}",
+    $class-name: ".u-s-#{$abbreviation}";
+    @if index($u-spacing-classes-for-breakpoints, $class-name) {
+      @include generate-at-breakpoints($class-name ,
         $u-spacing-breakpoints) {
         @include to-rem($type, 0);
       }
+    }
   }
 
   // Everything else
@@ -890,19 +898,22 @@ $u-spacing-types: (
 
     // Loop through the sizes
     @each $size in (base tiny small large huge) {
-      @include generate-at-breakpoints(".u-s-#{$abbreviation}-#{$size}",
-        $u-spacing-breakpoints) {
+      $class-name: ".u-s-#{$abbreviation}-#{$size}";
+      @if index($u-spacing-classes-for-breakpoints, $class-name) != null {
+        @include generate-at-breakpoints($class-name,
+          $u-spacing-breakpoints) {
 
-        // Get all the sizes
-        $size-value: map-get($u-spacing-sizes, $size);
+          // Get all the sizes
+          $size-value: map-get($u-spacing-sizes, $size);
 
-        // Negative spacing
-        @if str_index($abbreviation, '-n') != null {
-          $size-value: $size-value * -1;
+          // Negative spacing
+          @if str_index($abbreviation, '-n') != null {
+            $size-value: $size-value * -1;
+          }
+
+          // All other spacing
+          @include to-rem($type, $size-value);
         }
-
-        // All other spacing
-        @include to-rem($type, $size-value);
       }
     }
   }
