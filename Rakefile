@@ -8,7 +8,7 @@ namespace :test do
 
     File.open('test.scss', 'w')
 
-    result = `sass test.scss test.css`
+    result = `sass style-test.scss test.css`
 
     raise result unless $?.to_i == 0
 
